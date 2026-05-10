@@ -18,6 +18,10 @@ A lightweight Flask-based weather application that provides current conditions, 
 - **Weather API:** [Open-Meteo](https://open-meteo.com/) (free, open-source)
 - **Geocoding:** Open-Meteo Geocoding API
 
+## Live Demo
+
+Try the app live: [https://weather-app-ten-alpha-39.vercel.app](https://weather-app-ten-alpha-39.vercel.app)
+
 ## Screenshots
 
 ### Homepage
