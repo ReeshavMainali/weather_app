@@ -119,12 +119,12 @@
             name="city"
             value="{{ city }}"
             placeholder="Search city…"
-            class="w-36 sm:w-48 bg-transparent border-b border-ink-200 dark:border-ink-700 text-ink-900 dark:text-ink-100 placeholder-ink-300 dark:placeholder-ink-600 font-mono text-xs py-1.5 px-1 focus:outline-none focus:border-ink-500 dark:focus:border-ink-400 transition-colors duration-200"
+            class="w-36 sm:w-48 bg-transparent border-b border-ink-200 dark:border-ink-700 text-ink-900 dark:text-ink-100 placeholder-ink-500 dark:placeholder-ink-600 font-mono text-xs py-1.5 px-1 focus:outline-none focus:border-ink-500 dark:focus:border-ink-400 transition-colors duration-200"
           />
           <button
             type="submit"
             aria-label="Search"
-            class="ml-2 text-ink-400 hover:text-ink-900 dark:hover:text-ink-100 transition-colors"
+            class="ml-2 text-ink-600 hover:text-ink-900 dark:hover:text-ink-100 transition-colors"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -150,14 +150,14 @@
         class="animate-fade-up-1 border border-ink-200 dark:border-ink-800 p-8 text-center"
       >
         <p
-          class="font-mono text-xs tracking-widest uppercase text-ink-400 dark:text-ink-500 mb-2"
+          class="font-mono text-xs tracking-widest uppercase text-ink-600 dark:text-ink-500 mb-2"
         >
           Error
         </p>
         <p class="text-ink-600 dark:text-ink-400 text-sm">{{ error }}</p>
         <a
           href="/"
-          class="inline-block mt-6 font-mono text-xs tracking-wider uppercase text-ink-400 hover:text-ink-900 dark:hover:text-ink-100 transition-colors"
+          class="inline-block mt-6 font-mono text-xs tracking-wider uppercase text-ink-600 hover:text-ink-900 dark:hover:text-ink-100 transition-colors"
         >
           ← Try again
         </a>
@@ -168,7 +168,7 @@
       <!-- Location + time -->
       <div class="animate-fade-up-1 mb-10">
         <div
-          class="flex items-center gap-2 text-xs font-mono tracking-[0.15em] uppercase text-ink-400 dark:text-ink-500 mb-1"
+          class="flex items-center gap-2 text-xs font-mono tracking-[0.15em] uppercase text-ink-600 dark:text-ink-500 mb-1"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -187,7 +187,7 @@
           {{ weather.location }}
         </div>
         <p
-          class="font-mono text-xs text-ink-300 dark:text-ink-600"
+          class="font-mono text-xs text-ink-600 dark:text-ink-600"
           id="local-time"
         >
           —
@@ -217,7 +217,7 @@
               >
                 {{ weather.label }}
               </p>
-              <p class="font-mono text-xs text-ink-400 dark:text-ink-500">
+                <class="font-mono text-xs text-ink-600 dark:text-ink-500">
                 Feels like {{ weather.feels }}°C
               </p>
             </div>
@@ -228,7 +228,7 @@
         <div class="hidden sm:flex flex-col items-end gap-3 text-right pb-1">
           <div>
             <p
-              class="font-mono text-[10px] tracking-widest uppercase text-ink-300 dark:text-ink-600"
+              class="font-mono text-[10px] tracking-widest uppercase text-ink-600 dark:text-ink-600"
             >
               Humidity
             </p>
@@ -240,7 +240,7 @@
           </div>
           <div>
             <p
-              class="font-mono text-[10px] tracking-widest uppercase text-ink-300 dark:text-ink-600"
+              class="font-mono text-[10px] tracking-widest uppercase text-ink-600 dark:text-ink-600"
             >
               Wind
             </p>
@@ -252,7 +252,7 @@
           </div>
           <div>
             <p
-              class="font-mono text-[10px] tracking-widest uppercase text-ink-300 dark:text-ink-600"
+              class="font-mono text-[10px] tracking-widest uppercase text-ink-600 dark:text-ink-600"
             >
               UV Index
             </p>
@@ -260,7 +260,7 @@
               class="font-sans font-medium text-sm text-ink-700 dark:text-ink-300"
             >
               {{ weather.uv }}
-              <span class="text-ink-400 dark:text-ink-500 font-light">
+              <span class="text-ink-600 dark:text-ink-500 font-light">
                 · {% if weather.uv <= 2 %}Low{% elif weather.uv <= 5
                 %}Moderate{% elif weather.uv <= 7 %}High{% else %}Very high{%
                 endif %}
@@ -276,7 +276,7 @@
       >
         <div class="bg-ink-50 dark:bg-ink-950 py-3 px-3">
           <p
-            class="font-mono text-[9px] tracking-widest uppercase text-ink-300 dark:text-ink-600 mb-1"
+            class="font-mono text-[9px] tracking-widest uppercase text-ink-600 dark:text-ink-600 mb-1"
           >
             Humidity
           </p>
@@ -284,23 +284,23 @@
         </div>
         <div class="bg-ink-50 dark:bg-ink-950 py-3 px-3">
           <p
-            class="font-mono text-[9px] tracking-widest uppercase text-ink-300 dark:text-ink-600 mb-1"
+            class="font-mono text-[9px] tracking-widest uppercase text-ink-600 dark:text-ink-600 mb-1"
           >
             Wind
           </p>
           <p class="font-sans font-medium text-sm">
-            {{ weather.wind }}<span class="text-ink-400 text-xs"> km/h</span>
+            {{ weather.wind }}<span class="text-ink-600 text-xs"> km/h</span>
           </p>
         </div>
         <div class="bg-ink-50 dark:bg-ink-950 py-3 px-3">
           <p
-            class="font-mono text-[9px] tracking-widest uppercase text-ink-300 dark:text-ink-600 mb-1"
+            class="font-mono text-[9px] tracking-widest uppercase text-ink-600 dark:text-ink-600 mb-1"
           >
             UV
           </p>
           <p class="font-sans font-medium text-sm">
             {{ weather.uv }}
-            <span class="text-ink-400 font-light text-xs">
+            <span class="text-ink-600 font-light text-xs">
               · {% if weather.uv <= 2 %}Low{% elif weather.uv <= 5 %}Mod{% else
               %}High{% endif %}
             </span>
@@ -311,7 +311,7 @@
       <!-- Activity advice -->
       <div class="animate-fade-up-3 mb-10">
         <p
-          class="font-mono text-[10px] tracking-[0.2em] uppercase text-ink-300 dark:text-ink-600 mb-4"
+          class="font-mono text-[10px] tracking-[0.2em] uppercase text-ink-600 dark:text-ink-600 mb-4"
         >
           Activity Advice
         </p>
@@ -346,7 +346,7 @@
       <!-- 7-day forecast -->
       <div class="animate-fade-up-4">
         <p
-          class="font-mono text-[10px] tracking-[0.2em] uppercase text-ink-300 dark:text-ink-600 mb-4"
+          class="font-mono text-[10px] tracking-[0.2em] uppercase text-ink-600 dark:text-ink-600 mb-4"
         >
           7-Day Forecast
         </p>
@@ -357,7 +357,7 @@
               class="flex flex-col items-center gap-2 w-[72px] border border-ink-100 dark:border-ink-800 {% if loop.first %}bg-ink-100 dark:bg-ink-800{% else %}bg-transparent{% endif %} py-4 px-2"
             >
               <p
-                class="font-mono text-[10px] tracking-wider uppercase {% if loop.first %}text-ink-700 dark:text-ink-300{% else %}text-ink-400 dark:text-ink-500{% endif %}"
+                class="font-mono text-[10px] tracking-wider uppercase {% if loop.first %}text-ink-800 dark:text-ink-300{% else %}text-ink-600 dark:text-ink-500{% endif %}"
               >
                 {{ day.label }}
               </p>
@@ -368,7 +368,7 @@
                 >
                   {{ day.hi }}°
                 </p>
-                <p class="font-sans text-xs text-ink-400 dark:text-ink-500">
+                <p class="font-sans text-xs text-ink-600 dark:text-ink-500">
                   {{ day.lo }}°
                 </p>
               </div>
@@ -388,13 +388,13 @@
         class="mt-14 pt-6 border-t border-ink-100 dark:border-ink-800 flex items-center justify-between"
       >
         <p
-          class="font-mono text-[10px] tracking-wide text-ink-300 dark:text-ink-700 uppercase"
+          class="font-mono text-[10px] tracking-wide text-ink-600 dark:text-ink-700 uppercase"
         >
           Open-Meteo · Free & open
         </p>
         <a
           href="/"
-          class="font-mono text-[10px] tracking-widest uppercase text-ink-300 dark:text-ink-700 hover:text-ink-700 dark:hover:text-ink-300 transition-colors"
+          class="font-mono text-[10px] tracking-widest uppercase text-ink-600 dark:text-ink-700 hover:text-ink-900 dark:hover:text-ink-300 transition-colors"
         >
           ← Home
         </a>

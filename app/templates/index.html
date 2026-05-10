@@ -79,11 +79,11 @@
     >
       <div class="animate-fade-up mb-16 text-center">
         <div
-          class="inline-flex items-center gap-2 text-xs font-mono tracking-[0.2em] uppercase text-ink-400 dark:text-ink-500 mb-8"
+          class="inline-flex items-center gap-2 text-xs font-mono tracking-[0.2em] uppercase text-ink-600 dark:text-ink-500 mb-8"
         >
-          <span class="w-5 h-px bg-ink-300 dark:bg-ink-600"></span>
+          <span class="w-5 h-px bg-ink-400 dark:bg-ink-600"></span>
           Weather Intelligence
-          <span class="w-5 h-px bg-ink-300 dark:bg-ink-600"></span>
+          <span class="w-5 h-px bg-ink-400 dark:bg-ink-600"></span>
         </div>
         <h1
           class="font-display text-[clamp(3.5rem,10vw,7rem)] leading-[0.9] tracking-tight text-ink-900 dark:text-ink-50 mb-6"
@@ -91,7 +91,7 @@
           Sky<em class="not-italic text-ink-400 dark:text-ink-500">glass</em>
         </h1>
         <p
-          class="font-sans font-light text-base text-ink-500 dark:text-ink-400 max-w-xs mx-auto leading-relaxed"
+          class="font-sans font-light text-base text-ink-700 dark:text-ink-400 max-w-xs mx-auto leading-relaxed"
         >
           Real-time weather with practical advice for your day.
         </p>
@@ -100,7 +100,7 @@
       <div class="animate-fade-up-slow w-full max-w-sm">
         <form action="/weather" method="POST" id="weather-form">
           <label
-            class="block text-xs font-mono tracking-[0.15em] uppercase text-ink-400 dark:text-ink-500 mb-3"
+            class="block text-xs font-mono tracking-[0.15em] uppercase text-ink-600 dark:text-ink-500 mb-3"
           >
             Your city
           </label>
@@ -118,7 +118,7 @@
             <button
               type="submit"
               aria-label="Search"
-              class="absolute right-0 top-0 bottom-0 px-4 text-ink-400 dark:text-ink-500 hover:text-ink-900 dark:hover:text-ink-100 transition-colors duration-200"
+              class="absolute right-0 top-0 bottom-0 px-4 text-ink-600 dark:text-ink-500 hover:text-ink-900 dark:hover:text-ink-100 transition-colors duration-200"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -142,7 +142,7 @@
             <!-- Locating state (hidden by default) -->
             <p
               id="locating-msg"
-              class="hidden font-mono text-xs text-ink-400 dark:text-ink-500 flex items-center gap-2"
+              class="hidden font-mono text-xs text-ink-600 dark:text-ink-500 flex items-center gap-2"
             >
               <span
                 class="inline-block w-3 h-3 border border-ink-300 dark:border-ink-600 border-t-ink-600 dark:border-t-ink-300 rounded-full animate-spin"
@@ -153,7 +153,7 @@
             <!-- Error state (hidden by default) -->
             <p
               id="location-error"
-              class="hidden font-mono text-xs text-ink-400 dark:text-ink-500"
+              class="hidden font-mono text-xs text-ink-600 dark:text-ink-500"
             >
               Location unavailable — enter a city manually.
             </p>
@@ -165,12 +165,12 @@
               <button
                 type="button"
                 onclick="document.getElementById('city-input').value='{{ city }}'; document.getElementById('weather-form').submit()"
-                class="text-xs font-mono text-ink-400 dark:text-ink-500 hover:text-ink-700 dark:hover:text-ink-300 transition-colors duration-150 cursor-pointer"
+                class="text-xs font-mono text-ink-600 dark:text-ink-500 hover:text-ink-900 dark:hover:text-ink-300 transition-colors duration-150 cursor-pointer"
               >
                 {{ city }}
               </button>
               {% if not loop.last %}
-              <span class="text-xs text-ink-200 dark:text-ink-700">·</span>
+              <span class="text-xs text-ink-400 dark:text-ink-700">·</span>
               {% endif %} {% endfor %}
             </div>
           </div>
@@ -181,7 +181,7 @@
         class="animate-fade-up-slower absolute bottom-8 left-0 right-0 text-center"
       >
         <p
-          class="text-xs font-mono text-ink-300 dark:text-ink-700 tracking-wide"
+          class="text-xs font-mono text-ink-600 dark:text-ink-700 tracking-wide"
         >
           Powered by Open-Meteo · No API key required
         </p>
