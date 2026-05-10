@@ -36,24 +36,24 @@ def get_advice(code: int, temp: float, wind: float, humidity: int, uv: int) -> l
         tag("Wear a heavy coat", "warn")
     if uv >= 6:                          
         tag(f"Apply sunscreen (UV {uv})", "warn")
-    if humidity > 80 and not is_rainy:   
+    if humidity > 80 and not is_rainy and is_warm:   
         tag("Feels muggy outside", "warn")
 
     if is_clear and is_warm and not is_windy:
         tag("Great day for a hike", "good")
     if is_clear and not is_hot:
         tag("Perfect for drying laundry", "good")
-    if is_clear and is_warm:
+    if is_clear and is_warm and not is_windy:
         tag("Nice day for a picnic", "good")
-    if is_clear and not is_hot and not is_cold:
+    if is_clear and not is_hot and not is_cold and not is_windy and humidity <= 80:
         tag("Open your windows", "good")
-    if not is_rainy and not is_stormy and not is_windy and not is_cold:
+    if not is_rainy and not is_stormy and not is_windy and not is_cold and not is_foggy:
         tag("Good for cycling", "good")
     if is_rainy and not is_stormy:
         tag("Good reading weather", "good")
     if is_cloudy and not is_rainy:
         tag("Decent for a walk", "good")
-    if is_rainy or is_stormy:
+    if is_rainy and not is_stormy:
         tag("Skip outdoor plans", "bad")
 
     if not tags:
