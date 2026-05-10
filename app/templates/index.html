@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="en" class="h-full">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Skyglass — Weather + What To Do</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: "media",
+        theme: {
+          extend: {
+            fontFamily: {
+              display: ['"Playfair Display"', "Georgia", "serif"],
+              sans: ['"DM Sans"', "sans-serif"],
+              mono: ['"DM Mono"', "monospace"],
+            },
+            colors: {
+              ink: {
+                50: "#F8FAFC",
+                100: "#F0F2F5",
+                200: "#E5E9F0",
+                300: "#D4DFE6",
+                400: "#A6B5C5",
+                500: "#8CB0D1",
+                600: "#7DA0C3",
+                700: "#6A8EB8",
+                800: "#4A5D70",
+                900: "#2C333E",
+                950: "#1B1E25",
+              },
+            },
+            animation: {
+              "fade-up": "fadeUp 0.7s ease both",
+              "fade-up-slow": "fadeUp 0.9s 0.2s ease both",
+              "fade-up-slower": "fadeUp 1.1s 0.4s ease both",
+            },
+            keyframes: {
+              fadeUp: {
+                "0%": { opacity: "0", transform: "translateY(18px)" },
+                "100%": { opacity: "1", transform: "translateY(0)" },
+              },
+            },
+          },
+        },
+      };
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      ::selection {
+        background: #d8d6d1;
+        color: #201e1a;
+      }
+      .dark ::selection {
+        background: #504b44;
+        color: #f7f6f3;
+      }
+    </style>
+  </head>
+
+  <body
+    class="h-full font-sans bg-ink-50 dark:bg-ink-950 text-ink-900 dark:text-ink-100 transition-colors duration-300"
+  >
+    <div
+      class="fixed inset-0 pointer-events-none opacity-[0.025] dark:opacity-[0.04]"
+      style="
+        background-image: url(&quot;data:image/svg+xml,%3Csvg viewBox=%220 0 256 256%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noise%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.9%22 numOctaves=%224%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noise)%22/%3E%3C/svg%3E&quot;);
+        background-size: 200px;
+      "
+    ></div>
+
+    <main
+      class="relative min-h-full flex flex-col items-center justify-center px-6 py-20"
+    >
+      <div class="animate-fade-up mb-16 text-center">
+        <div
+          class="inline-flex items-center gap-2 text-xs font-mono tracking-[0.2em] uppercase text-ink-400 dark:text-ink-500 mb-8"
+        >
+          <span class="w-5 h-px bg-ink-300 dark:bg-ink-600"></span>
+          Weather Intelligence
+          <span class="w-5 h-px bg-ink-300 dark:bg-ink-600"></span>
+        </div>
+        <h1
+          class="font-display text-[clamp(3.5rem,10vw,7rem)] leading-[0.9] tracking-tight text-ink-900 dark:text-ink-50 mb-6"
+        >
+          Sky<em class="not-italic text-ink-400 dark:text-ink-500">glass</em>
+        </h1>
+        <p
+          class="font-sans font-light text-base text-ink-500 dark:text-ink-400 max-w-xs mx-auto leading-relaxed"
+        >
+          Real-time weather with practical advice for your day.
+        </p>
+      </div>
+
+      <div class="animate-fade-up-slow w-full max-w-sm">
+        <form action="/weather" method="POST" id="weather-form">
+          <label
+            class="block text-xs font-mono tracking-[0.15em] uppercase text-ink-400 dark:text-ink-500 mb-3"
+          >
+            Your city
+          </label>
+
+          <div class="relative">
+            <input
+              type="text"
+              name="city"
+              id="city-input"
+              placeholder="Kathmandu, Tokyo, London…"
+              autofocus
+              required
+              class="w-full bg-white dark:bg-ink-900 border border-ink-200 dark:border-ink-700 text-ink-900 dark:text-ink-100 placeholder-ink-300 dark:placeholder-ink-600 font-sans text-sm px-4 py-3.5 pr-12 rounded-none focus:outline-none focus:border-ink-500 dark:focus:border-ink-400 transition-colors duration-200"
+            />
+            <button
+              type="submit"
+              aria-label="Search"
+              class="absolute right-0 top-0 bottom-0 px-4 text-ink-400 dark:text-ink-500 hover:text-ink-900 dark:hover:text-ink-100 transition-colors duration-200"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <line x1="5" y1="12" x2="19" y2="12" />
+                <polyline points="12 5 19 12 12 19" />
+              </svg>
+            </button>
+          </div>
+
+          <!-- Status line: shows location progress or quick cities -->
+          <div class="mt-4 min-h-[20px]">
+            <!-- Locating state (hidden by default) -->
+            <p
+              id="locating-msg"
+              class="hidden font-mono text-xs text-ink-400 dark:text-ink-500 flex items-center gap-2"
+            >
+              <span
+                class="inline-block w-3 h-3 border border-ink-300 dark:border-ink-600 border-t-ink-600 dark:border-t-ink-300 rounded-full animate-spin"
+              ></span>
+              Detecting location…
+            </p>
+
+            <!-- Error state (hidden by default) -->
+            <p
+              id="location-error"
+              class="hidden font-mono text-xs text-ink-400 dark:text-ink-500"
+            >
+              Location unavailable — enter a city manually.
+            </p>
+
+            <!-- Quick cities (shown by default, hidden during location fetch) -->
+            <div id="quick-cities" class="flex flex-wrap gap-2">
+              {% for city in ['Kathmandu', 'Tokyo', 'London', 'New York',
+              'Sydney'] %}
+              <button
+                type="button"
+                onclick="document.getElementById('city-input').value='{{ city }}'; document.getElementById('weather-form').submit()"
+                class="text-xs font-mono text-ink-400 dark:text-ink-500 hover:text-ink-700 dark:hover:text-ink-300 transition-colors duration-150 cursor-pointer"
+              >
+                {{ city }}
+              </button>
+              {% if not loop.last %}
+              <span class="text-xs text-ink-200 dark:text-ink-700">·</span>
+              {% endif %} {% endfor %}
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div
+        class="animate-fade-up-slower absolute bottom-8 left-0 right-0 text-center"
+      >
+        <p
+          class="text-xs font-mono text-ink-300 dark:text-ink-700 tracking-wide"
+        >
+          Powered by Open-Meteo · No API key required
+        </p>
+      </div>
+    </main>
+
+    <script>
+      const input = document.getElementById("city-input");
+      const form = document.getElementById("weather-form");
+      const quickCities = document.getElementById("quick-cities");
+      const locatingMsg = document.getElementById("locating-msg");
+      const errorMsg = document.getElementById("location-error");
+
+      function showLocating() {
+        quickCities.classList.add("hidden");
+        errorMsg.classList.add("hidden");
+        locatingMsg.classList.remove("hidden");
+      }
+
+      function showError() {
+        locatingMsg.classList.add("hidden");
+        quickCities.classList.remove("hidden"); // restore quick cities as fallback
+        errorMsg.classList.remove("hidden");
+        // auto-hide error after 4s
+        setTimeout(() => errorMsg.classList.add("hidden"), 4000);
+      }
+
+      function showQuickCities() {
+        locatingMsg.classList.add("hidden");
+        errorMsg.classList.add("hidden");
+        quickCities.classList.remove("hidden");
+      }
+
+      async function reverseGeocode(lat, lon) {
+        const url = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&zoom=10&format=json&accept-language=en`;
+        const resp = await fetch(url, {
+          headers: { "User-Agent": "Skyglass Weather App" },
+        });
+        if (!resp.ok) throw new Error("Nominatim error");
+        const data = await resp.json();
+        const addr = data.address || {};
+
+        // Try these in order — county tends to be the clean short name
+        const raw =
+          addr.county ||
+          addr.city ||
+          addr.town ||
+          addr.village ||
+          addr.state ||
+          data.display_name.split(",")[0];
+
+        // Strip common municipal suffixes that Nominatim appends
+        return raw
+          .replace(
+            /\s+(Metropolitan City|Municipality|Sub-Metropolitan City|Metropolis|District|Province|City|Town|Village)$/i,
+            "",
+          )
+          .trim();
+      }
+
+      function geolocate() {
+        if (!navigator.geolocation) {
+          showQuickCities();
+          return;
+        }
+
+        showLocating();
+
+        navigator.geolocation.getCurrentPosition(
+          async (pos) => {
+            try {
+              const city = await reverseGeocode(
+                pos.coords.latitude,
+                pos.coords.longitude,
+              );
+              input.value = city;
+              form.submit(); // auto-submit once we have the city name
+            } catch {
+              showError();
+            }
+          },
+          (_err) => {
+            // User denied or timed out — fall back gracefully
+            showError();
+          },
+          { timeout: 8000, maximumAge: 300000 },
+        );
+      }
+
+      // Kick off on page load
+      geolocate();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,422 @@
+<!doctype html>
+<html lang="en" class="h-full">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ weather.location if weather else city }} — Skyglass</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: "media",
+        theme: {
+          extend: {
+            fontFamily: {
+              display: ['"Playfair Display"', "Georgia", "serif"],
+              sans: ['"DM Sans"', "sans-serif"],
+              mono: ['"DM Mono"', "monospace"],
+            },
+            colors: {
+              ink: {
+                50: "#F8FAFC",
+                100: "#F0F2F5",
+                200: "#E5E9F0",
+                300: "#D4DFE6",
+                400: "#A6B5C5",
+                500: "#8CB0D1",
+                600: "#7DA0C3",
+                700: "#6A8EB8",
+                800: "#4A5D70",
+                900: "#2C333E",
+                950: "#1B1E25",
+              },
+            },
+            animation: {
+              "fade-up": "fadeUp 0.5s ease both",
+              "fade-up-1": "fadeUp 0.5s 0.08s ease both",
+              "fade-up-2": "fadeUp 0.5s 0.16s ease both",
+              "fade-up-3": "fadeUp 0.5s 0.24s ease both",
+              "fade-up-4": "fadeUp 0.5s 0.32s ease both",
+            },
+            keyframes: {
+              fadeUp: {
+                "0%": { opacity: "0", transform: "translateY(12px)" },
+                "100%": { opacity: "1", transform: "translateY(0)" },
+              },
+            },
+          },
+        },
+      };
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      ::selection {
+        background: #d8d6d1;
+        color: #201e1a;
+      }
+      .dark ::selection {
+        background: #504b44;
+        color: #f7f6f3;
+      }
+
+      /* Scrollbar */
+      ::-webkit-scrollbar {
+        width: 4px;
+        height: 4px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #d8d6d1;
+        border-radius: 2px;
+      }
+      .dark ::-webkit-scrollbar-thumb {
+        background: #504b44;
+      }
+
+      /* Forecast scroll snap */
+      .forecast-scroll {
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+      }
+      .forecast-scroll > * {
+        scroll-snap-align: start;
+      }
+    </style>
+  </head>
+
+  <body
+    class="min-h-full font-sans bg-ink-50 dark:bg-ink-950 text-ink-900 dark:text-ink-100 transition-colors duration-300"
+  >
+    <!-- Background grain -->
+    <div
+      class="fixed inset-0 pointer-events-none opacity-[0.025] dark:opacity-[0.04]"
+      style="
+        background-image: url(&quot;data:image/svg+xml,%3Csvg viewBox=%220 0 256 256%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noise%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.9%22 numOctaves=%224%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noise)%22/%3E%3C/svg%3E&quot;);
+        background-size: 200px;
+      "
+    ></div>
+
+    <div class="relative max-w-2xl mx-auto px-5 py-10 sm:py-14">
+      <!-- Top nav -->
+      <nav class="animate-fade-up flex items-center justify-between mb-12">
+        <a
+          href="/"
+          class="font-display text-xl text-ink-900 dark:text-ink-100 hover:text-ink-500 dark:hover:text-ink-400 transition-colors"
+        >
+          Sky<em class="not-italic text-ink-400 dark:text-ink-500">glass</em>
+        </a>
+
+        <!-- Search bar -->
+        <form action="/weather" method="POST" class="flex items-center gap-0">
+          <input
+            type="text"
+            name="city"
+            value="{{ city }}"
+            placeholder="Search city…"
+            class="w-36 sm:w-48 bg-transparent border-b border-ink-200 dark:border-ink-700 text-ink-900 dark:text-ink-100 placeholder-ink-300 dark:placeholder-ink-600 font-mono text-xs py-1.5 px-1 focus:outline-none focus:border-ink-500 dark:focus:border-ink-400 transition-colors duration-200"
+          />
+          <button
+            type="submit"
+            aria-label="Search"
+            class="ml-2 text-ink-400 hover:text-ink-900 dark:hover:text-ink-100 transition-colors"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <line x1="5" y1="12" x2="19" y2="12" />
+              <polyline points="12 5 19 12 12 19" />
+            </svg>
+          </button>
+        </form>
+      </nav>
+
+      {% if error %}
+      <!-- Error state -->
+      <div
+        class="animate-fade-up-1 border border-ink-200 dark:border-ink-800 p-8 text-center"
+      >
+        <p
+          class="font-mono text-xs tracking-widest uppercase text-ink-400 dark:text-ink-500 mb-2"
+        >
+          Error
+        </p>
+        <p class="text-ink-600 dark:text-ink-400 text-sm">{{ error }}</p>
+        <a
+          href="/"
+          class="inline-block mt-6 font-mono text-xs tracking-wider uppercase text-ink-400 hover:text-ink-900 dark:hover:text-ink-100 transition-colors"
+        >
+          ← Try again
+        </a>
+      </div>
+
+      {% elif weather %}
+
+      <!-- Location + time -->
+      <div class="animate-fade-up-1 mb-10">
+        <div
+          class="flex items-center gap-2 text-xs font-mono tracking-[0.15em] uppercase text-ink-400 dark:text-ink-500 mb-1"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="10"
+            height="10"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+            <circle cx="12" cy="10" r="3" />
+          </svg>
+          {{ weather.location }}
+        </div>
+        <p
+          class="font-mono text-xs text-ink-300 dark:text-ink-600"
+          id="local-time"
+        >
+          —
+        </p>
+      </div>
+
+      <!-- Hero temperature block -->
+      <div
+        class="animate-fade-up-2 mb-10 flex items-end justify-between border-b border-ink-100 dark:border-ink-800 pb-8"
+      >
+        <div>
+          <div
+            class="font-display text-[clamp(4rem,18vw,8rem)] leading-none tracking-tight text-ink-900 dark:text-ink-50"
+          >
+            {{ weather.temp }}<span
+              class="text-[0.35em] text-ink-300 dark:text-ink-600 align-super ml-1"
+              >°C</span
+            >
+          </div>
+          <div class="mt-3 flex items-center gap-3">
+            <span class="text-2xl" role="img" aria-label="{{ weather.label }}"
+              >{{ weather.icon }}</span
+            >
+            <div>
+              <p
+                class="font-sans font-medium text-sm text-ink-700 dark:text-ink-300"
+              >
+                {{ weather.label }}
+              </p>
+              <p class="font-mono text-xs text-ink-400 dark:text-ink-500">
+                Feels like {{ weather.feels }}°C
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right stats column -->
+        <div class="hidden sm:flex flex-col items-end gap-3 text-right pb-1">
+          <div>
+            <p
+              class="font-mono text-[10px] tracking-widest uppercase text-ink-300 dark:text-ink-600"
+            >
+              Humidity
+            </p>
+            <p
+              class="font-sans font-medium text-sm text-ink-700 dark:text-ink-300"
+            >
+              {{ weather.humidity }}%
+            </p>
+          </div>
+          <div>
+            <p
+              class="font-mono text-[10px] tracking-widest uppercase text-ink-300 dark:text-ink-600"
+            >
+              Wind
+            </p>
+            <p
+              class="font-sans font-medium text-sm text-ink-700 dark:text-ink-300"
+            >
+              {{ weather.wind }} km/h {{ weather.wind_dir }}
+            </p>
+          </div>
+          <div>
+            <p
+              class="font-mono text-[10px] tracking-widest uppercase text-ink-300 dark:text-ink-600"
+            >
+              UV Index
+            </p>
+            <p
+              class="font-sans font-medium text-sm text-ink-700 dark:text-ink-300"
+            >
+              {{ weather.uv }}
+              <span class="text-ink-400 dark:text-ink-500 font-light">
+                · {% if weather.uv <= 2 %}Low{% elif weather.uv <= 5
+                %}Moderate{% elif weather.uv <= 7 %}High{% else %}Very high{%
+                endif %}
+              </span>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mobile stats row -->
+      <div
+        class="animate-fade-up-2 sm:hidden grid grid-cols-3 gap-px bg-ink-100 dark:bg-ink-800 mb-10"
+      >
+        <div class="bg-ink-50 dark:bg-ink-950 py-3 px-3">
+          <p
+            class="font-mono text-[9px] tracking-widest uppercase text-ink-300 dark:text-ink-600 mb-1"
+          >
+            Humidity
+          </p>
+          <p class="font-sans font-medium text-sm">{{ weather.humidity }}%</p>
+        </div>
+        <div class="bg-ink-50 dark:bg-ink-950 py-3 px-3">
+          <p
+            class="font-mono text-[9px] tracking-widest uppercase text-ink-300 dark:text-ink-600 mb-1"
+          >
+            Wind
+          </p>
+          <p class="font-sans font-medium text-sm">
+            {{ weather.wind }}<span class="text-ink-400 text-xs"> km/h</span>
+          </p>
+        </div>
+        <div class="bg-ink-50 dark:bg-ink-950 py-3 px-3">
+          <p
+            class="font-mono text-[9px] tracking-widest uppercase text-ink-300 dark:text-ink-600 mb-1"
+          >
+            UV
+          </p>
+          <p class="font-sans font-medium text-sm">
+            {{ weather.uv }}
+            <span class="text-ink-400 font-light text-xs">
+              · {% if weather.uv <= 2 %}Low{% elif weather.uv <= 5 %}Mod{% else
+              %}High{% endif %}
+            </span>
+          </p>
+        </div>
+      </div>
+
+      <!-- Activity advice -->
+      <div class="animate-fade-up-3 mb-10">
+        <p
+          class="font-mono text-[10px] tracking-[0.2em] uppercase text-ink-300 dark:text-ink-600 mb-4"
+        >
+          Activity Advice
+        </p>
+        <div class="flex flex-wrap gap-2">
+          {% for tip in weather.advice %} {% if tip.kind == 'good' %}
+          <span
+            class="inline-flex items-center gap-1.5 text-xs font-sans font-medium bg-transparent border border-ink-200 dark:border-ink-700 text-ink-700 dark:text-ink-300 px-3 py-1.5 rounded-full"
+          >
+            <span
+              class="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0"
+            ></span>
+            {{ tip.text }}
+          </span>
+          {% elif tip.kind == 'warn' %}
+          <span
+            class="inline-flex items-center gap-1.5 text-xs font-sans font-medium bg-transparent border border-ink-200 dark:border-ink-700 text-ink-700 dark:text-ink-300 px-3 py-1.5 rounded-full"
+          >
+            <span class="w-1.5 h-1.5 rounded-full bg-amber-400 shrink-0"></span>
+            {{ tip.text }}
+          </span>
+          {% else %}
+          <span
+            class="inline-flex items-center gap-1.5 text-xs font-sans font-medium bg-transparent border border-ink-200 dark:border-ink-700 text-ink-700 dark:text-ink-300 px-3 py-1.5 rounded-full"
+          >
+            <span class="w-1.5 h-1.5 rounded-full bg-rose-500 shrink-0"></span>
+            {{ tip.text }}
+          </span>
+          {% endif %} {% endfor %}
+        </div>
+      </div>
+
+      <!-- 7-day forecast -->
+      <div class="animate-fade-up-4">
+        <p
+          class="font-mono text-[10px] tracking-[0.2em] uppercase text-ink-300 dark:text-ink-600 mb-4"
+        >
+          7-Day Forecast
+        </p>
+        <div class="overflow-x-auto forecast-scroll -mx-5 px-5">
+          <div class="flex gap-2 pb-2" style="min-width: max-content">
+            {% for day in weather.forecast %}
+            <div
+              class="flex flex-col items-center gap-2 w-[72px] border border-ink-100 dark:border-ink-800 {% if loop.first %}bg-ink-100 dark:bg-ink-800{% else %}bg-transparent{% endif %} py-4 px-2"
+            >
+              <p
+                class="font-mono text-[10px] tracking-wider uppercase {% if loop.first %}text-ink-700 dark:text-ink-300{% else %}text-ink-400 dark:text-ink-500{% endif %}"
+              >
+                {{ day.label }}
+              </p>
+              <span class="text-xl" role="img">{{ day.icon }}</span>
+              <div class="text-center">
+                <p
+                  class="font-sans font-medium text-sm text-ink-800 dark:text-ink-200"
+                >
+                  {{ day.hi }}°
+                </p>
+                <p class="font-sans text-xs text-ink-400 dark:text-ink-500">
+                  {{ day.lo }}°
+                </p>
+              </div>
+              {% if day.rain_chance %}
+              <p class="font-mono text-[9px] text-sky-500 dark:text-sky-400">
+                {{ day.rain_chance }}%
+              </p>
+              {% endif %}
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div
+        class="mt-14 pt-6 border-t border-ink-100 dark:border-ink-800 flex items-center justify-between"
+      >
+        <p
+          class="font-mono text-[10px] tracking-wide text-ink-300 dark:text-ink-700 uppercase"
+        >
+          Open-Meteo · Free & open
+        </p>
+        <a
+          href="/"
+          class="font-mono text-[10px] tracking-widest uppercase text-ink-300 dark:text-ink-700 hover:text-ink-700 dark:hover:text-ink-300 transition-colors"
+        >
+          ← Home
+        </a>
+      </div>
+
+      {% endif %}
+    </div>
+
+    <script>
+      // Show local time (client-side, no server needed)
+      const el = document.getElementById("local-time");
+      if (el) {
+        const fmt = new Intl.DateTimeFormat("en-US", {
+          weekday: "long",
+          month: "long",
+          day: "numeric",
+          hour: "numeric",
+          minute: "2-digit",
+          hour12: true,
+        });
+        el.textContent = fmt.format(new Date());
+      }
+    </script>
+  </body>
+</html>
